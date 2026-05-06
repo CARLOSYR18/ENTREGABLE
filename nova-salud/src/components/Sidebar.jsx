@@ -1,4 +1,4 @@
-export default function Sidebar({ currentPage, onNavigate }) {
+export default function Sidebar({ currentPage, onNavigate, user, profile, onLogout }) {
   const navItems = [
     { section: 'General' },
     { id: 'dashboard', label: 'Dashboard', icon: 'ti-layout-dashboard' },
@@ -8,6 +8,16 @@ export default function Sidebar({ currentPage, onNavigate }) {
     { id: 'clientes', label: 'Clientes', icon: 'ti-users' },
     { id: 'empleados', label: 'Empleados', icon: 'ti-id-badge' },
   ]
+
+  const name = profile?.full_name || user?.email || 'Usuario'
+  const role = profile?.role || 'usuario'
+
+  const initials = name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
     <aside className="sidebar">
@@ -38,12 +48,24 @@ export default function Sidebar({ currentPage, onNavigate }) {
 
       <div className="sidebar-footer">
         <div className="user-pill">
-          <div className="user-avatar">JR</div>
+          <div className="user-avatar">{initials}</div>
+
           <div className="user-info">
-            <div className="name">Juan Ríos</div>
-            <div className="role">Vendedor</div>
+            <div className="name">{name}</div>
+            <div className="role">
+              {role === 'vendedor'
+                ? 'Vendedor'
+                : role === 'admin'
+                ? 'Administrador'
+                : 'Usuario'}
+            </div>
           </div>
         </div>
+
+        <button className="logout-btn-sidebar" onClick={onLogout}>
+          <i className="ti ti-logout" />
+          Cerrar sesión
+        </button>
       </div>
     </aside>
   )

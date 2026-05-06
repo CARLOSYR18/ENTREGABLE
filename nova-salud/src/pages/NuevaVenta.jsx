@@ -12,10 +12,19 @@ export default function NuevaVenta() {
   const [clienteDireccion, setClienteDireccion] = useState('')
   const [clienteTelefono, setClienteTelefono] = useState('')
   const [formaPago, setFormaPago] = useState('Contado')
+  const [moneda, setMoneda] = useState('PEN')
   const [busqueda, setBusqueda] = useState('')
   const [cart, setCart] = useState([])
   const [totalRecibido, setTotalRecibido] = useState('')
   const [modal, setModal] = useState(null)
+
+  const tasas = {
+    PEN: { label: 'PEN - SOLES', simbolo: 'S/', rate: 1 },
+    USD: { label: 'USD - DÓLARES', simbolo: '$', rate: 3.75 },
+    EUR: { label: 'EUR - EUROS', simbolo: '€', rate: 4.05 },
+  }
+
+  const monedaActual = tasas[moneda]
 
   const handleTipoDoc = (tipo) => {
     setTipoDoc(tipo)
@@ -25,6 +34,7 @@ export default function NuevaVenta() {
   const subtotal = cart.reduce((acc, item) => acc + item.precio * item.qty, 0)
   const igv = subtotal * IGV_RATE
   const total = subtotal + igv
+  const totalConvertido = total / monedaActual.rate
   const vuelto = parseFloat(totalRecibido || 0) - total
   const today = new Date().toISOString().split('T')[0]
 
@@ -69,325 +79,311 @@ export default function NuevaVenta() {
   }
 
   return (
-    <div className="sale-page fade-in">
-      <div className="sale-header">
+    <div className="pos-page">
+      <div className="pos-header">
         <div>
+          <span className="pos-kicker">Punto de venta</span>
           <h1>Nueva venta</h1>
-          <p>Registra ventas, comprobantes y productos de forma rápida.</p>
+          <p>Registra productos, cliente y comprobante en una sola pantalla.</p>
         </div>
 
-        <div className="sale-status">
-          <i className="ti ti-shield-check" />
-          Venta segura
+        <div className="pos-header-actions">
+          <div className="pos-secure">
+            <i className="ti ti-shield-check" />
+            Venta segura
+          </div>
         </div>
       </div>
 
-      <div className="sale-mode-card">
-        <div className="notice clean">
-          <i className="ti ti-info-circle" />
-          Los datos se guardarán en Supabase al conectar la base de datos.
-        </div>
+      <div className="pos-layout">
+        <main className="pos-main">
+          <section className="pos-panel pos-product-panel">
+            <div className="pos-panel-head">
+              <div>
+                <h2>Agregar productos</h2>
+                <p>Busca por código o nombre del medicamento.</p>
+              </div>
+              <i className="ti ti-capsule" />
+            </div>
 
-        <div className="sale-toolbar">
-          <div className="tabs-bar sale-tabs">
-            {['Boleta', 'Factura'].map(t => (
-              <button
-                key={t}
-                className={`tab-btn ${tipoDoc === t ? 'active' : ''}`}
-                onClick={() => handleTipoDoc(t)}
-              >
-                {t}
+            <div className="pos-search">
+              <i className="ti ti-search" />
+              <input
+                placeholder="Buscar producto..."
+                value={busqueda}
+                onChange={e => setBusqueda(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && addProduct()}
+              />
+              <button onClick={addProduct}>
+                <i className="ti ti-plus" />
+                Agregar
               </button>
-            ))}
-          </div>
-
-          <div className="radio-group modern">
-            <label className="radio-opt">
-              <input type="radio" name="modo" defaultChecked />
-              <span>Generar y enviar comprobante</span>
-            </label>
-
-            <label className="radio-opt">
-              <input type="radio" name="modo" />
-              <span>Solo generar venta</span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className="venta-top">
-        <div className="card sale-card">
-          <div className="card-title">
-            <div>
-              <span>Comprobante de pago</span>
-              <p>Datos principales de emisión</p>
-            </div>
-            <i className="ti ti-file-invoice" />
-          </div>
-
-          <div className="form-group">
-            <div className="form-label"><i className="ti ti-building" /> Empresa emisora</div>
-            <select className="form-control">
-              <option>BOTICA NOVA SALUD EIRL</option>
-            </select>
-          </div>
-
-          <div className="form-row cols-2">
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-calendar" /> Fecha emisión</div>
-              <input type="date" className="form-control" defaultValue={today} />
             </div>
 
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-file-text" /> Tipo comprobante</div>
-              <select className="form-control" value={tipoDoc} onChange={e => handleTipoDoc(e.target.value)}>
-                <option>Boleta</option>
-                <option>Factura</option>
-              </select>
-            </div>
-          </div>
+            <div className="pos-sale-options">
+              <div>
+                <label>Tipo operación</label>
+                <select>
+                  <option>0101 - Venta interna</option>
+                </select>
+              </div>
 
-          <div className="form-row cols-3">
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-hash" /> Serie</div>
-              <select className="form-control" value={serie} onChange={e => setSerie(e.target.value)}>
-                {tipoDoc === 'Boleta'
-                  ? <><option>B001</option><option>B002</option></>
-                  : <><option>F001</option><option>F002</option></>
-                }
-              </select>
-            </div>
+              <div>
+                <label>Forma de pago</label>
+                <select value={formaPago} onChange={e => setFormaPago(e.target.value)}>
+                  <option>Contado</option>
+                  <option>Crédito</option>
+                </select>
+              </div>
 
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-list-numbers" /> Correlativo</div>
-              <input className="form-control" readOnly value="35" />
-            </div>
-
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-currency-dollar" /> Moneda</div>
-              <select className="form-control">
-                <option>PEN - SOLES</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="card sale-card">
-          <div className="card-title">
-            <div>
-              <span>Datos del cliente</span>
-              <p>Información del comprador</p>
-            </div>
-            <i className="ti ti-user" />
-          </div>
-
-          <div className="form-row cols-2">
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-id-badge" /> Tipo documento</div>
-              <select className="form-control" value={tipoCliente} onChange={e => setTipoCliente(e.target.value)}>
-                <option>0 - Sin documento</option>
-                <option>1 - DNI</option>
-                <option>6 - RUC</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-search" /> Nro. documento</div>
-              <div className="input-action">
+              <div>
+                <label>Total recibido</label>
                 <input
-                  className="form-control"
-                  placeholder="Ingrese número"
-                  value={nroDoc}
-                  onChange={e => setNroDoc(e.target.value)}
+                  type="number"
+                  placeholder="0.00"
+                  value={totalRecibido}
+                  onChange={e => setTotalRecibido(e.target.value)}
                 />
-                <button className="btn btn-primary compact">
-                  <i className="ti ti-search" />
-                </button>
+              </div>
+
+              <div>
+                <label>Vuelto</label>
+                <input readOnly value={vuelto >= 0 && totalRecibido ? vuelto.toFixed(2) : '0.00'} />
               </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <div className="form-label"><i className="ti ti-user-circle" /> Nombre / Razón social</div>
-            <input
-              className="form-control"
-              placeholder="Ingrese nombre del cliente"
-              value={clienteNombre}
-              onChange={e => setClienteNombre(e.target.value)}
-            />
-          </div>
-
-          <div className="form-row cols-2">
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-map-pin" /> Dirección</div>
-              <input
-                className="form-control"
-                placeholder="Dirección"
-                value={clienteDireccion}
-                onChange={e => setClienteDireccion(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-phone" /> Teléfono</div>
-              <input
-                className="form-control"
-                placeholder="Teléfono"
-                value={clienteTelefono}
-                onChange={e => setClienteTelefono(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="venta-bottom">
-        <div className="card sale-card products-card">
-          <div className="card-title">
-            <div>
-              <span>Listado de productos</span>
-              <p>Agrega productos a la venta actual</p>
-            </div>
-            <i className="ti ti-list" />
-          </div>
-
-          <div className="product-search">
-            <i className="ti ti-search" />
-            <input
-              placeholder="Ingrese código o nombre del producto"
-              value={busqueda}
-              onChange={e => setBusqueda(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && addProduct()}
-            />
-            <button className="btn btn-primary" onClick={addProduct}>
-              <i className="ti ti-plus" />
-              Agregar
-            </button>
-          </div>
-
-          <div className="form-row cols-4 payment-row">
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-category" /> Tipo operación</div>
-              <select className="form-control">
-                <option>0101 - Venta interna</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-wallet" /> Forma de pago</div>
-              <select className="form-control" value={formaPago} onChange={e => setFormaPago(e.target.value)}>
-                <option>Contado</option>
-                <option>Crédito</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-cash" /> Total recibido</div>
-              <input
-                className="form-control"
-                type="number"
-                placeholder="0.00"
-                value={totalRecibido}
-                onChange={e => setTotalRecibido(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <div className="form-label"><i className="ti ti-arrows-exchange" /> Vuelto</div>
-              <input className="form-control" readOnly value={vuelto >= 0 && totalRecibido ? vuelto.toFixed(2) : '0.00'} />
-            </div>
-          </div>
-
-          <div className="table-wrap">
-            <table className="data-table sale-table">
-              <thead>
-                <tr>
-                  <th>Descripción</th>
-                  <th>Precio unit.</th>
-                  <th>Cant.</th>
-                  <th>Subtotal</th>
-                  <th>IGV</th>
-                  <th>Importe</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {cart.length === 0 ? (
+            <div className="pos-table-wrap">
+              <table className="pos-table">
+                <thead>
                   <tr>
-                    <td colSpan={7} className="empty-state">
-                      <i className="ti ti-shopping-cart" />
-                      Ningún producto agregado aún
-                    </td>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cant.</th>
+                    <th>Importe</th>
+                    <th></th>
                   </tr>
-                ) : cart.map(item => {
-                  const sub = item.precio * item.qty
-                  const igvItem = sub * IGV_RATE
-                  const imp = sub + igvItem
+                </thead>
 
-                  return (
-                    <tr key={item.id}>
-                      <td style={{ fontWeight: 800 }}>{item.nombre}</td>
-                      <td>S/ {item.precio.toFixed(2)}</td>
-                      <td>
-                        <input
-                          className="qty-input"
-                          type="number"
-                          min={1}
-                          value={item.qty}
-                          onChange={e => updateQty(item.id, e.target.value)}
-                        />
-                      </td>
-                      <td>S/ {sub.toFixed(2)}</td>
-                      <td>S/ {igvItem.toFixed(2)}</td>
-                      <td style={{ fontWeight: 900 }}>S/ {imp.toFixed(2)}</td>
-                      <td>
-                        <button className="icon-btn danger" onClick={() => removeItem(item.id)}>
-                          <i className="ti ti-trash" />
-                        </button>
+                <tbody>
+                  {cart.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="pos-empty">
+                        <i className="ti ti-shopping-cart-plus" />
+                        <strong>No hay productos agregados</strong>
+                        <span>Busca un producto y presiona agregar.</span>
                       </td>
                     </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                  ) : cart.map(item => {
+                    const sub = item.precio * item.qty
+                    const imp = sub + sub * IGV_RATE
 
-        <div className="card resumen-card">
-          <div className="card-title">
-            <div>
-              <span>Resumen</span>
-              <p>Total de la venta</p>
+                    return (
+                      <tr key={item.id}>
+                        <td>
+                          <strong>{item.nombre}</strong>
+                          <span>IGV incluido</span>
+                        </td>
+                        <td>S/ {item.precio.toFixed(2)}</td>
+                        <td>
+                          <input
+                            className="pos-qty"
+                            type="number"
+                            min={1}
+                            value={item.qty}
+                            onChange={e => updateQty(item.id, e.target.value)}
+                          />
+                        </td>
+                        <td><strong>S/ {imp.toFixed(2)}</strong></td>
+                        <td>
+                          <button className="pos-delete" onClick={() => removeItem(item.id)}>
+                            <i className="ti ti-trash" />
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
-            <i className="ti ti-calculator" />
-          </div>
+          </section>
 
-          <div className="resumen-body">
-            <div className="resumen-row"><span>Op. Gravadas</span><strong>S/ {subtotal.toFixed(2)}</strong></div>
-            <div className="resumen-row"><span>Op. Inafectas</span><strong>S/ 0.00</strong></div>
-            <div className="resumen-row"><span>Op. Exoneradas</span><strong>S/ 0.00</strong></div>
-            <div className="resumen-row"><span>Subtotal</span><strong>S/ {subtotal.toFixed(2)}</strong></div>
-            <div className="resumen-row"><span>IGV (18%)</span><strong>S/ {igv.toFixed(2)}</strong></div>
-          </div>
+          <section className="pos-two-cols">
+            <div className="pos-panel">
+              <div className="pos-panel-head">
+                <div>
+                  <h2>Comprobante</h2>
+                  <p>Datos fiscales de la venta.</p>
+                </div>
+                <i className="ti ti-file-invoice" />
+              </div>
 
-          <div className="resumen-total">
-            <span className="label">TOTAL</span>
-            <span className="amount">S/ {total.toFixed(2)}</span>
-          </div>
+              <div className="doc-switch">
+                {['Boleta', 'Factura'].map(t => (
+                  <button
+                    key={t}
+                    className={tipoDoc === t ? 'active' : ''}
+                    onClick={() => handleTipoDoc(t)}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
 
-          <div className="btn-actions">
-            <button className="btn btn-danger" onClick={() => setCart([])}>
-              <i className="ti ti-x" />
-              Cancelar
-            </button>
+              <div className="pos-form-grid">
+                <div className="field span-2">
+                  <label>Empresa emisora</label>
+                  <select>
+                    <option>BOTICA NOVA SALUD EIRL</option>
+                  </select>
+                </div>
 
-            <button className="btn btn-primary" onClick={handleVender}>
-              <i className="ti ti-shopping-cart-check" />
-              Vender
-            </button>
+                <div className="field">
+                  <label>Fecha</label>
+                  <input type="date" defaultValue={today} />
+                </div>
+
+                <div className="field">
+                  <label>Tipo</label>
+                  <select value={tipoDoc} onChange={e => handleTipoDoc(e.target.value)}>
+                    <option>Boleta</option>
+                    <option>Factura</option>
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label>Serie</label>
+                  <select value={serie} onChange={e => setSerie(e.target.value)}>
+                    {tipoDoc === 'Boleta'
+                      ? <><option>B001</option><option>B002</option></>
+                      : <><option>F001</option><option>F002</option></>
+                    }
+                  </select>
+                </div>
+
+                <div className="field">
+                  <label>Correlativo</label>
+                  <input readOnly value="35" />
+                </div>
+
+                <div className="field span-2">
+                  <label>Moneda</label>
+                  <select value={moneda} onChange={e => setMoneda(e.target.value)}>
+                    <option value="PEN">PEN - SOLES</option>
+                    <option value="USD">USD - DÓLARES</option>
+                    <option value="EUR">EUR - EUROS</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="pos-panel">
+              <div className="pos-panel-head">
+                <div>
+                  <h2>Cliente</h2>
+                  <p>Datos del comprador.</p>
+                </div>
+                <i className="ti ti-user" />
+              </div>
+
+              <div className="pos-form-grid">
+                <div className="field">
+                  <label>Tipo documento</label>
+                  <select value={tipoCliente} onChange={e => setTipoCliente(e.target.value)}>
+                    <option>0 - Sin documento</option>
+                    <option>1 - DNI</option>
+                    <option>6 - RUC</option>
+                  </select>
+                </div>
+
+                <div className="field with-button">
+                  <label>Nro. documento</label>
+                  <div>
+                    <input
+                      placeholder="Ingrese número"
+                      value={nroDoc}
+                      onChange={e => setNroDoc(e.target.value)}
+                    />
+                    <button>
+                      <i className="ti ti-search" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="field span-2">
+                  <label>Nombre / Razón social</label>
+                  <input
+                    placeholder="Ingrese nombre del cliente"
+                    value={clienteNombre}
+                    onChange={e => setClienteNombre(e.target.value)}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Dirección</label>
+                  <input
+                    placeholder="Dirección"
+                    value={clienteDireccion}
+                    onChange={e => setClienteDireccion(e.target.value)}
+                  />
+                </div>
+
+                <div className="field">
+                  <label>Teléfono</label>
+                  <input
+                    placeholder="Teléfono"
+                    value={clienteTelefono}
+                    onChange={e => setClienteTelefono(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <aside className="pos-summary">
+          <div className="summary-card">
+            <div className="summary-head">
+              <span>Resumen de venta</span>
+              <i className="ti ti-calculator" />
+            </div>
+
+            <div className="summary-total">
+              <small>Total a pagar</small>
+              <strong>{monedaActual.simbolo} {totalConvertido.toFixed(2)}</strong>
+              {moneda !== 'PEN' && <span>Equivale a S/ {total.toFixed(2)}</span>}
+            </div>
+
+            <div className="summary-lines">
+              <div><span>Op. Gravadas</span><b>S/ {subtotal.toFixed(2)}</b></div>
+              <div><span>Subtotal</span><b>S/ {subtotal.toFixed(2)}</b></div>
+              <div><span>IGV 18%</span><b>S/ {igv.toFixed(2)}</b></div>
+              <div><span>Productos</span><b>{cart.length}</b></div>
+              <div><span>Moneda</span><b>{moneda}</b></div>
+            </div>
+
+            <div className="send-options">
+              <label>
+                <input type="radio" name="modo" defaultChecked />
+                Enviar comprobante
+              </label>
+              <label>
+                <input type="radio" name="modo" />
+                Solo venta
+              </label>
+            </div>
+
+            <div className="summary-actions">
+              <button className="cancel" onClick={() => setCart([])}>
+                Cancelar
+              </button>
+
+              <button className="sell" onClick={handleVender}>
+                <i className="ti ti-shopping-cart-check" />
+                Vender
+              </button>
+            </div>
           </div>
-        </div>
+        </aside>
       </div>
 
       {modal && (

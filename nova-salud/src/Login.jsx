@@ -1,21 +1,38 @@
 import { useState } from 'react'
+import { supabase } from './lib/supabase'
 
-export default function Login({ onLogin }) {
+export default function Login() {
   const [selectedRole, setSelectedRole] = useState('usuario')
+  const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
+    setErrorMsg('')
+    setLoading(true)
 
     const form = new FormData(e.target)
     const email = form.get('email')
     const password = form.get('password')
 
     if (!email || !password) {
-      alert('Completa todos los campos')
+      setErrorMsg('Completa todos los campos')
+      setLoading(false)
       return
     }
 
-    onLogin({ email, role: selectedRole })
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      setErrorMsg('Correo o contraseña incorrectos')
+      setLoading(false)
+      return
+    }
+
+    setLoading(false)
   }
 
   return (
@@ -53,8 +70,10 @@ export default function Login({ onLogin }) {
               <input type="email" name="email" placeholder="Correo" />
               <input type="password" name="password" placeholder="Contraseña" />
 
-              <button className="login-btn" type="submit">
-                Login
+              {errorMsg && <div className="login-error">{errorMsg}</div>}
+
+              <button className="login-btn" type="submit" disabled={loading}>
+                {loading ? 'Ingresando...' : 'Login'}
               </button>
             </form>
 
@@ -67,11 +86,11 @@ export default function Login({ onLogin }) {
 
           <div className="right-content">
             <h2>¿Nuevo aquí?</h2>
-            <p>
-              Crea una cuenta para acceder a tus productos, ventas o información.
-            </p>
+            <p>Crea una cuenta desde Supabase Auth para acceder al sistema.</p>
 
-            <button className="signup-btn">Sign Up</button>
+            <button className="signup-btn" type="button">
+              Sign Up
+            </button>
           </div>
         </div>
       </div>
@@ -91,7 +110,6 @@ html, body, #root {
   height: 100%;
 }
 
-/* PANTALLA COMPLETA */
 .login-page {
   width: 100vw;
   height: 100vh;
@@ -101,7 +119,6 @@ html, body, #root {
   background: white;
 }
 
-/* LADO AZUL */
 .login-left {
   position: relative;
   background: linear-gradient(135deg, #4f8ee8, #235ebd);
@@ -172,7 +189,7 @@ html, body, #root {
 form {
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 20px;
 }
 
 input {
@@ -182,6 +199,15 @@ input {
   padding: 25px 28px;
   font-size: 24px;
   outline: none;
+}
+
+.login-error {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .login-btn {
@@ -195,6 +221,11 @@ input {
   cursor: pointer;
 }
 
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .login-btn:hover {
   background: #f97316;
 }
@@ -206,7 +237,6 @@ input {
   font-weight: bold;
 }
 
-/* LADO BLANCO */
 .login-right {
   position: relative;
   background: white;
@@ -251,7 +281,6 @@ input {
   background: #2555aa;
 }
 
-/* CÍRCULOS */
 .circle {
   position: absolute;
   border-radius: 50%;
@@ -282,7 +311,6 @@ input {
   background: linear-gradient(135deg, #5397e9, #2566c8);
 }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .login-page {
     grid-template-columns: 1fr;
