@@ -1,0 +1,42 @@
+
+> nova-salud@1.0.0 dev
+> vite --host 127.0.0.1
+
+Port 5173 is in use, trying another one...
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m292[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5174[22m/[39m
+[2m4:14:10 p. m.[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mtailwind.config.js[22m
+[2m4:14:10 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx, /src/index.css[22m
+[2m4:18:46 p. m.[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mtailwind.config.js[22m
+[2m4:18:46 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m4:25:31 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m4:36:21 p. m.[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2mtailwind.config.js[22m
+[2m4:36:21 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m4:39:42 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m4:45:02 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NuevaVenta.jsx, /src/index.css[22m
+[2m4:49:37 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NuevaVenta.jsx, /src/index.css[22m
+[2m4:50:37 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NuevaVenta.jsx, /src/index.css[22m
+[2m4:51:21 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NuevaVenta.jsx, /src/index.css[22m
+[2m4:56:11 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Historial.jsx, /src/index.css[22m
+[2m5:02:23 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Productos.jsx, /src/index.css[22m
+[2m5:02:23 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Clientes.jsx, /src/index.css[22m
+[2m5:03:30 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Empleados.jsx, /src/index.css[22m
+[2m5:11:15 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Productos.jsx, /src/index.css[22m
+[2m5:11:30 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Clientes.jsx, /src/index.css[22m
+[2m5:11:45 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Empleados.jsx, /src/index.css[22m
+[2m5:12:11 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m5:12:27 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Historial.jsx, /src/index.css[22m
+[2m5:12:31 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Historial.jsx, /src/index.css[22m
+[2m5:13:12 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NuevaVenta.jsx, /src/index.css[22m
+[2m5:13:26 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Productos.jsx, /src/index.css[22m
+[2m5:13:32 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Clientes.jsx, /src/index.css[22m
+[2m5:13:36 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Empleados.jsx, /src/index.css[22m
+[2m9:02:35 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Historial.jsx, /src/index.css[22m
+[2m9:02:45 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NuevaVenta.jsx, /src/index.css[22m
+[2m9:07:27 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m9:07:48 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m9:07:59 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m9:08:08 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m9:08:22 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
